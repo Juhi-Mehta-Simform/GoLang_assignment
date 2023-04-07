@@ -69,7 +69,7 @@ PinNo:
 	if pinNo != usr.PinNo {
 		attemps--
 		if attemps == 0 {
-			fmt.Println("You have exceeded the maximum number of attempts. Please try again after sometimes")
+			fmt.Println("You have exceeded the maximum number of attempts. Please try again after sometime.")
 			fmt.Println(strings.Repeat("-", 60))
 			os.Exit(0)
 		} else if x != 4 {
