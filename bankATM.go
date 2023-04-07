@@ -58,6 +58,7 @@ Services:
 		depositMoney(&users)
 		goto Services
 	case 3:
+		checkBalance(&users)
 		goto Services
 	case 4:
 		fmt.Println("Thank you...Visit Again")
@@ -91,6 +92,10 @@ CardNo:
 			break
 		}
 	}
+	if (usr == Users{}) {
+		fmt.Println("User not found")
+		os.Exit(0)
+	}
 	attemps := 3
 PinNo:
 	fmt.Print("Enter your Pin Number: ")
@@ -120,10 +125,7 @@ PinNo:
 		fmt.Println("You are successfully logged in.")
 		fmt.Println(strings.Repeat("-", 60))
 	}
-	if (usr == Users{}) {
-		fmt.Println("User not found")
-		os.Exit(0)
-	}
+
 }
 
 func isContinue() bool {
@@ -162,8 +164,8 @@ Withdraw:
 		} else {
 			os.Exit(0)
 		}
-	} else if amount > 0 && amount < 100 {
-		fmt.Println("Withdrawal amount shoulde be greater than 100.")
+	} else if amount >= 0 && amount < 500 {
+		fmt.Println("Withdrawal amount shoulde be greater than 500.")
 		fmt.Println(strings.Repeat("-", 60))
 		if isContinue() {
 			goto Withdraw
@@ -171,7 +173,7 @@ Withdraw:
 			os.Exit(0)
 		}
 	} else if amount > 0 {
-		amt := math.Mod(amount, 100)
+		amt := math.Mod(amount, 500)
 		if amt == 0 {
 			usr.AccountBalance -= amount
 			fmt.Println(strings.Repeat("-", 60))
@@ -184,7 +186,7 @@ Withdraw:
 			}
 		} else {
 			fmt.Println(strings.Repeat("-", 60))
-			fmt.Println("Withdrawal amount should be in multiplication of 100")
+			fmt.Println("Withdrawal amount should be in multiplication of 500")
 			fmt.Println(strings.Repeat("-", 60))
 			if isContinue() {
 				goto Withdraw
@@ -216,30 +218,60 @@ Deposit:
 	input, _ := reader.ReadString('\n')
 	amount, err := strconv.ParseFloat(strings.TrimSpace(input), 32)
 	if err != nil {
-		panic("Please enter the valid amount.")
+		panic("Please enter the input amount. The input should be a number.")
 	}
 	if amount < 0 {
-		fmt.Println("Invalid amount")
-	} else if amount > 0 && amount < 100 {
-		fmt.Println("The minimum amount should be 100")
-		fmt.Println("Do you want to continue Y/N?")
-		input, _ = reader.ReadString('\n')
-		ans := strings.TrimSpace(input)
-		if ans == "y" || ans == "Y" {
+		fmt.Println("Please enter the valid input. Input must be a Positive Number.")
+		if isContinue() {
 			goto Deposit
+		} else {
+			os.Exit(0)
+		}
+	} else if amount >= 0 && amount < 500 {
+		fmt.Println("Deposit amount shoulde be greater than 500.")
+		if isContinue() {
+			goto Deposit
+		} else {
+			os.Exit(0)
 		}
 	} else if amount > 50000 {
-		fmt.Println("You can't deposit more than 50000.")
-		fmt.Println("Do you want to continue Y/N?")
-		input, _ = reader.ReadString('\n')
-		ans := strings.TrimSpace(input)
-		if ans == "y" || ans == "Y" {
+		fmt.Println("Deposit amount should be less than 50000.")
+		if isContinue() {
 			goto Deposit
+		} else {
+			os.Exit(0)
 		}
 	} else {
-		fmt.Println("Your current balance is: ", usr.AccountBalance)
-		usr.AccountBalance += amount
-		fmt.Println("Yo have successfully deposited amount: ", amount)
-		fmt.Println("Your new balance is: ", usr.AccountBalance)
+		amt := math.Mod(amount, 500)
+		if amt == 0 {
+			fmt.Println("Your current balance is: ", usr.AccountBalance)
+			usr.AccountBalance += amount
+			fmt.Println("Yo have successfully deposited amount: ", amount)
+			fmt.Printf("Your new balance is: %.2f\n", usr.AccountBalance)
+			if isContinue() {
+				return
+			} else {
+				os.Exit(0)
+			}
+		} else {
+			fmt.Println(strings.Repeat("-", 60))
+			fmt.Println("Deposit amount should be in multiplication of 500")
+			fmt.Println(strings.Repeat("-", 60))
+			if isContinue() {
+				goto Deposit
+			} else {
+				os.Exit(0)
+			}
+		}
+
+	}
+}
+
+func checkBalance(u *[]Users) {
+	fmt.Println("Your Current Balance is: ", usr.AccountBalance)
+	if isContinue() {
+		return
+	} else {
+		os.Exit(0)
 	}
 }
